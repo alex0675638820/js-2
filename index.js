@@ -271,4 +271,363 @@
 // console.log(loginInput.className);
 /// буде:  <button class="my-button" style="background: red;"><button>   null 
 
+//////...Функція конструктор (NEW) ........./////
 
+// const User = {
+// 	login: null,
+// 	password: null,
+// 	role: null,
+// 	age: null,
+// };
+
+///......
+// const registerData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// };
+// const user = Object.create(User, {
+// 	login: {
+// 		value: registerData.login,
+// 	},
+// 	password: {
+// 		value: registerData.password,
+// 	},
+// 	verify: {
+// 		value(password){
+// 		return this.password === password;  
+// 		///перевіряемо пароль з тим що прийшов
+// 	},
+// },
+// });
+// console.log(user.verify("test"));
+/// буде  false
+///Якщо потрібно через виликий кусок коду створити ще користувача буде не зручно
+// const adminData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// 	isAdmin: true,
+// };
+// const adminuser = Object.create(User, {
+// 	login: {
+// 		value: registerData.login,
+// 	},
+// 	password: {
+// 		value: registerData.password,
+// 	},
+// 	role: {
+// 		// value: isAdmin ? "Admin" : "User",
+// 		////перевірка на адміна
+// 	},
+// 	verify: {
+// 		value(password){
+// 		return this.password === password;  
+// 		///перевіряемо пароль з тим що прийшов
+// 	},
+// },
+// });
+// console.log(adminuser);
+///тому робити простіше так
+// const User = {
+// 	login: null,
+// 	password: null,
+// 	role: null,
+// 	age: null,
+// };
+
+// function createUser({login, password, isAdmin}){
+// 	return Object.create(User, {
+// 		login: {
+// 			value: login,
+// 		},
+// 		password: {
+// 			value: password,
+// 		},
+// 		role: {
+// 			value: isAdmin ? "Admin" : "User",
+// 			////перевірка на адміна
+// 		},
+// 	})
+// }
+// const registerData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// };
+///тоді це не потрібно 
+// const user = Object.create(User, {
+// 	login: {
+// 		value: registerData.login,
+// 	},
+// 	password: {
+// 		value: registerData.password,
+// 	},
+// 	verify: {
+// 		value(password){
+// 		return this.password === password;  
+// 		///перевіряемо пароль з тим що прийшов
+// 	},
+// },
+// });
+// const adminData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// 	isAdmin: true,
+// };
+// const adminuser = Object.create(User, {
+// 	login: {
+// 		value: registerData.login,
+// 	},
+// 	password: {
+// 		value: registerData.password,
+// 	},
+// 	role: {
+// 		// value: isAdmin ? "Admin" : "User",
+// 		////перевірка на адміна
+// 	},
+// 	verify: {
+// 		value(password){
+// 		return this.password === password;  
+// 		///перевіряемо пароль з тим що прийшов
+// 	},
+// },
+// });
+//можно зробити так 
+// const adminData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// 	isAdmin: true,
+// };
+// const admin = createUser(adminData);
+// const registerData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// };
+// console.log(admin.password);
+// const user = createUser(registerData);
+// const testData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// };
+// console.log(user.login);
+// const testUser = createUser(testData);
+// console.log(testUser.login);
+///буде  123qwe
+// Ivan
+// Ivan
+
+// function User({login = null, password = null, isAdmin = null, age = 0, role = "user"}){
+// 	this.login = login;
+// 	this.password = password;
+// 	this.role = isAdmin ? "Admin" : "User";
+// 	this.age = age;
+
+// 	this.verify = function(password){
+// 		return this.password === password;  
+// 	};
+// };
+//якщо потрібна перевірка на new то можна зробити так 
+// function User(data){
+// 	if(new.target){
+// 		const{ login = null, password = null, isAdmin = null, age = 0, role = "user"} = data;
+// 		this.login = login;
+// 		this.password = password;
+// 		this.role = isAdmin ? "Admin" : "User";
+// 		this.age = age;
+
+// 		this.verify = function(password){
+// 			return this.password === password;  
+// 		};
+// 	} else {
+// 		return new User(data);
+// 	}
+// };
+// чи так спростити
+function User(data){
+	if(new.target){
+		const{ login = null, password = null, isAdmin = null, age = 0 } = data;
+		
+		const role = isAdmin ? "Admin" : "User";
+		const object = Object.assign(this, {
+			// Object.assign копіює всі властивості і зберігає this
+			login,
+			password,
+			role,
+			age,
+			// verify,
+		});
+		if (role === "Admin"){
+			object.verify = function(password){
+				console.debug(password, this);
+				//прологувати через .debug password, this,(поверне false та поверне весь this) 
+				return this.password === password;  
+			};
+		}
+		if(age >= 50){
+			object.login = String(object.login).toUpperCase();
+			///якщо 50 і старше логін писати з великої букви 
+			// (String переводе в текст toUpperCase робить великими буквами)
+		}
+		object.toString = function() {
+			return `Користувач ${this.login}`;
+		}
+		return object;
+	} else {
+		return new User(data);
+	}
+};
+
+
+// function UserAdmin({login = null, password = null, isAdmin = null, age = 0, role = "user"}){
+// 	this.login = login;
+// 	this.password = password;
+// 	this.role = isAdmin ? "Admin" : "User"; 
+// 	this.age = age;
+	
+// 	this.verify = function(password){
+// 		return this.password === password;  
+// 	};
+// };
+const adminData = {
+	login: "Ivan",
+	password: "123qwe",
+	isAdmin: true,
+};
+const admin = new User(adminData);
+const registerData = {
+	login: "Ivan",
+	password: "123qwe",
+	isAdmin: true,
+};
+// console.log(admin.role);
+
+User.prototype.test = "Hello world";
+///додаємо властивості в функцію
+
+const user = new User(registerData);
+
+const testData = {
+	login: "ivan",
+	password: "123qwe",
+	age: 50,
+};
+// console.log(user.password);
+const testUser = new User(testData);
+// console.log(testUser.login);
+///буде  Admin
+// 123qwe
+// Ivan
+// console.log(testUser === User);
+// console.log(testUser.__proto__ === User);
+// console.log(User.prototype);
+// console.log(Object.getPrototypeOf(testUser) === User.prototype);
+// console.log(user.test);
+// console.log(user.toString());
+// console.log(User.length);
+// const test = User;
+// console.log(test.name);
+///буде
+// false
+// false
+// {} обьєкт прототипу функції User
+// true
+// Hello world
+// Користувач Ivan
+// 1
+// User
+///........
+// console.log(user.verify("123qwe"));
+// const verifyUser = user.verify;
+// console.log(verifyUser);
+// console.log(verifyUser("123qwe"));
+///буде
+// 123qwe User {
+// 	login: 'Ivan',
+// 	password: '123qwe',
+// 	role: 'Admin',
+// 	age: 0,
+// 	verify: [Function (anonymous)],
+// 	toString: [Function (anonymous)]
+//   }
+//   true
+//   false
+// повернуло this як глобальний обьєк. тому що губиться зв'язок з this функції
+// [Function (anonymous)]
+// false
+// [Function (anonymous)]
+// 123qwe <ref *1> Object [global] {
+//   global: [Circular *1],
+//   queueMicrotask: [Function: queueMicrotask],
+//   clearImmediate: [Function: clearImmediate],
+//   setImmediate: [Function: setImmediate] {
+//     [Symbol(nodejs.util.promisify.custom)]: [Getter]
+//   },
+//   structuredClone: [Function: structuredClone],
+//   clearInterval: [Function: clearInterval],
+//   clearTimeout: [Function: clearTimeout],
+//   setInterval: [Function: setInterval],
+//   setTimeout: [Function: setTimeout] {
+//     [Symbol(nodejs.util.promisify.custom)]: [Getter]
+//   },
+//   atob: [Function: atob],
+//   btoa: [Function: btoa],
+//   performance: Performance {
+//     nodeTiming: PerformanceNodeTiming {
+//       name: 'node',
+//       entryType: 'node',
+//       startTime: 0,
+//       duration: 41.942800000309944,
+//       nodeStart: 2.8756000008434057,
+//       v8Start: 7.255799999460578,
+//       bootstrapComplete: 29.029200000688434,
+//       environment: 15.478499999269843,
+//       loopStart: -1,
+//       loopExit: -1,
+//       idleTime: 0
+//     },
+//     timeOrigin: 1701784852747.669
+//   },
+//   fetch: [AsyncFunction: fetch]
+// }
+// щоб робилося коректно треба привязати this аргумент 
+// const verifyUser = user.verify;
+// console.log(verifyUser.apply(user, ["123qwe"]));
+///буде
+// 123qwe User {
+// 	login: 'Ivan',
+// 	password: '123qwe',
+// 	role: 'Admin',
+// 	age: 0,
+// 	verify: [Function (anonymous)],
+// 	toString: [Function (anonymous)]
+//   }
+//   true
+//для створення нової функції потрібно використовувати 
+// const verifyUser = user.verify.bind(user, "123qwe");
+// console.log(verifyUser());
+///буде
+// 123qwe User {
+// 	login: 'Ivan',
+// 	password: '123qwe',
+// 	role: 'Admin',
+// 	age: 0,
+// 	verify: [Function (anonymous)],
+// 	toString: [Function (anonymous)]
+//   }
+//   true
+//для виклуку функції потрібно використовувати 
+function Animal(name){
+	this.name = name;
+};
+// function Person(name, age){
+// 	Animal.call(this,name);
+// 	//якщо ставимо apply аргумент в виді масиву
+// 	this.age = age;
+// };
+////або можна функцію ложити в змінну
+const Person = function(name, age){
+	Animal.call(this, name);
+	this.age = age;
+};
+const user2 = new Person("Alex", 32);
+console.log(user2.name);
+///буде
+// Alex
