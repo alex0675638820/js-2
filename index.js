@@ -441,39 +441,39 @@
 // 	}
 // };
 // чи так спростити
-function User(data){
-	if(new.target){
-		const{ login = null, password = null, isAdmin = null, age = 0 } = data;
+// function User(data){
+// 	if(new.target){
+// 		const{ login = null, password = null, isAdmin = null, age = 0 } = data;
 		
-		const role = isAdmin ? "Admin" : "User";
-		const object = Object.assign(this, {
-			// Object.assign копіює всі властивості і зберігає this
-			login,
-			password,
-			role,
-			age,
-			// verify,
-		});
-		if (role === "Admin"){
-			object.verify = function(password){
-				console.debug(password, this);
-				//прологувати через .debug password, this,(поверне false та поверне весь this) 
-				return this.password === password;  
-			};
-		}
-		if(age >= 50){
-			object.login = String(object.login).toUpperCase();
-			///якщо 50 і старше логін писати з великої букви 
-			// (String переводе в текст toUpperCase робить великими буквами)
-		}
-		object.toString = function() {
-			return `Користувач ${this.login}`;
-		}
-		return object;
-	} else {
-		return new User(data);
-	}
-};
+// 		const role = isAdmin ? "Admin" : "User";
+// 		const object = Object.assign(this, {
+// 			// Object.assign копіює всі властивості і зберігає this
+// 			login,
+// 			password,
+// 			role,
+// 			age,
+// 			// verify,
+// 		});
+// 		if (role === "Admin"){
+// 			object.verify = function(password){
+// 				console.debug(password, this);
+// 				//прологувати через .debug password, this,(поверне false та поверне весь this) 
+// 				return this.password === password;  
+// 			};
+// 		}
+// 		if(age >= 50){
+// 			object.login = String(object.login).toUpperCase();
+// 			///якщо 50 і старше логін писати з великої букви 
+// 			// (String переводе в текст toUpperCase робить великими буквами)
+// 		}
+// 		object.toString = function() {
+// 			return `Користувач ${this.login}`;
+// 		}
+// 		return object;
+// 	} else {
+// 		return new User(data);
+// 	}
+// };
 
 
 // function UserAdmin({login = null, password = null, isAdmin = null, age = 0, role = "user"}){
@@ -486,31 +486,31 @@ function User(data){
 // 		return this.password === password;  
 // 	};
 // };
-const adminData = {
-	login: "Ivan",
-	password: "123qwe",
-	isAdmin: true,
-};
-const admin = new User(adminData);
-const registerData = {
-	login: "Ivan",
-	password: "123qwe",
-	isAdmin: true,
-};
+// const adminData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// 	isAdmin: true,
+// };
+// const admin = new User(adminData);
+// const registerData = {
+// 	login: "Ivan",
+// 	password: "123qwe",
+// 	isAdmin: true,
+// };
 // console.log(admin.role);
 
-User.prototype.test = "Hello world";
+// User.prototype.test = "Hello world";
 ///додаємо властивості в функцію
 
-const user = new User(registerData);
+// const user = new User(registerData);
 
-const testData = {
-	login: "ivan",
-	password: "123qwe",
-	age: 50,
-};
+// const testData = {
+// 	login: "ivan",
+// 	password: "123qwe",
+// 	age: 50,
+// };
 // console.log(user.password);
-const testUser = new User(testData);
+// const testUser = new User(testData);
 // console.log(testUser.login);
 ///буде  Admin
 // 123qwe
@@ -614,20 +614,189 @@ const testUser = new User(testData);
 //   }
 //   true
 //для виклуку функції потрібно використовувати 
-function Animal(name){
-	this.name = name;
-};
-// function Person(name, age){
+// function Animal(name){
+// 	this.name = name;
+// };
+// // function Person(name, age){
 // 	Animal.call(this,name);
 // 	//якщо ставимо apply аргумент в виді масиву
 // 	this.age = age;
 // };
 ////або можна функцію ложити в змінну
-const Person = function(name, age){
-	Animal.call(this, name);
-	this.age = age;
-};
-const user2 = new Person("Alex", 32);
-console.log(user2.name);
+// const Person = function(name, age){
+// 	Animal.call(this, name);
+// 	this.age = age;
+// };
+// const user2 = new Person("Alex", 32);
+// console.log(user2.name);
 ///буде
 // Alex
+
+
+///// Класи
+// const User1 = {
+// 	login: null,
+// 	password: null,
+// 	role: null,
+// 	age: null,
+// };
+///стороння функція
+// function Animal() {
+// 	this.test = "Hello world";
+// }
+///створюємо конструктор
+// function User({login, password, role, age}){
+///якщо потрібно додати влистивості сторонної функціі	
+	// Animal.call(this);  
+///чи через Animal.apply(this)
+	// this.login = login;
+	// this.password = password;
+	// this.role = role;
+	// this.age = age;
+///якщо сттворюємо приватну властивість чи get, set
+// Object.defineProperty(this, {
+// 	name: {
+// 		get(){},
+// 		set(){}
+// 	}
+// })
+// }
+///перевіряємо додавання властивості можно так
+// console.log(new User({}));
+// console.log(new User({}).test);
+///буде
+// User {
+// 	test: 'Hello world',
+// 	login: undefined,   
+// 	password: undefined,
+// 	role: undefined,    
+// 	age: undefined      
+//   }
+/////
+//   Hello world
+// class Person {
+// 	constructor(name){
+// 		this.name = name;
+// 	}
+
+// 	test = () => {
+// 		console.log("Hello world", this.name);
+// 	};
+// }
+// Робимо все це через class
+/// наслідування extends всего може передати один класс його треба додати через 
+// class User extends Person {
+	// Поля класу і властивості
+
+///мметод конструктор (передає this. в аргумент )
+// constructor(login, password){
+// 	super(login);
+
+// 	this.login = login;
+// 	this.password = password;
+// }	
+//Приватний класс видно тільки всередені класуб в консоль не виводиться
+// #id = 10020;
+// id = null;
+// login = null;
+// password = null;
+// #role = null;
+// age = null;
+///створюємо метод всередені класу вкінці не потрібна коми.
+//Звертатися потрібно через this.  
+// isAdmin(){
+// 	return this.role === "Admin";
+// }
+// };
+///краще робити методи через стрілкову функцію
+// isAdmin = () => {
+// 	return this.role === "Admin";
+// };
+//метод створюючий нового юзера за логіном
+// creatAdminUser = (login) => {
+// 	const password = this.generateRandomPassword();
+// 	return new User(login, password);
+// }
+//метод створюючий рандомний пароль
+// при використанні static в user не буде видно цю властивість
+// але в User буде видно всі статичні і іх можно втавляти як функцью в const
+// наприклад (const password = this.generateRandomPassword())
+// static generateRandomPassword = () => {
+// 	///...
+// }
+// перевіряємо чи однакові логіни
+// verify(user1, user2) {
+// 	return user1.login === user2.login;
+// }
+// ///
+// get admin() {
+// 	return this.#role === "Admin";
+// }
+// set admin(value){
+// 	this.#role = "Admin";
+// }
+// };
+///створюємо обект user
+// const user = new User("Alex", "asd345qwe");
+/// Для множинного наслудування потрібно використовувти отдельно
+// Object.assign(User.prototype, User)
+// console.log(User.prototype.isPrototypeOf(user));
+//Перевіряємо чи онакові прототипи  (Якщо задати просто User буде class) 
+// console.log(user);
+///буде
+////User { login: null, password: null, role: null, age: null }
+// console.log(user.isAdmin());
+// якщо потрібно
+// function verifyAdmin(fn){
+// 	const result = fn();
+// 	if(!result){
+// 		throw new Error("Не адмін")
+// 	}
+// 	return true;
+// }
+///викликаемо функцію (якщо зробити без .bind буде помилка)
+// verifyAdmin(user.isAdmin.bind(this));
+///але так не зручно краще робити методи через стрілкову функцію (не загубеться this)
+// console.log(user.generateRandomPassword()); 
+///(з User робити не буде)
+// console.log(User.generateRandomPassword());
+/// при створенні статичного класу static (з user робити не буде)
+// console.log(User);
+// console.log(user);
+///буде
+// [class User] {
+// 	generateRandomPassword: [Function: generateRandomPassword]
+//   }
+//   User {
+//	id: null,
+// 	login: null,
+// 	password: null,
+// 	role: null,
+// 	age: null,
+// 	isAdmin: [Function: isAdmin],
+// 	creatAdminUser: [Function: creatAdminUser]
+//   }
+// console.log(user.admin);
+// user.admin = true;
+// console.log(user.admin);
+// ///буде
+// false
+// true
+// console.log(user);
+///буде після додавання в new User("Alex", "asd345qwe")
+// User {
+// 	id: null,
+// 	login: 'Alex',
+// 	password: 'asd345qwe',
+// 	age: null,
+// 	isAdmin: [Function: isAdmin],
+// 	creatAdminUser: [Function: creatAdminUser]
+//   }
+// console.log(user.test());
+///буде
+// Hello world Alex
+// undefined
+//перевырка на те чи належить обьект до класу 
+// console.log(user instanceof User);
+///буде
+// true
