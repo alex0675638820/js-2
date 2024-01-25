@@ -800,3 +800,641 @@
 // console.log(user instanceof User);
 ///буде
 // true
+
+///// Патерни програмування частина 1
+
+/////Одиночка (клас має один єкземпляр і надає глобальний доступ до нйогу)
+// class RecentPurchases {
+/// змінна в якій триматимимо замовлення
+	// static #instance = null;
+///створює змінну яка на старті є пустим масивом в неї кластимемо замовлення
+	// constructor(){
+	//  this.purchases = [];
+	// }
+////перевіряємо чи є в змінній замовленя якщо ні додаємо його і повертає мо створений обьєкт.
+	// static create () {
+	// 	if(!this.#instance){
+	// 		this.#instance = new RecentPurchases();
+	// 	}
+	// 	return this.#instance;
+	// }
+////метод додавання списку
+// add(item) {
+// 	this.purchases.push(item);
+// }
+///метод отримання списку
+// get() {
+// 	return this.purchases;
+// }
+// }
+// const lastPurchasesList = RecentPurchases.create();
+////.....будь де в коді викликаємо RecentPurchases.create і це буде однаково
+// const lastPurchasesList2 = RecentPurchases.create();
+// console.log(lastPurchasesList === lastPurchasesList2);
+///буде
+// true
+// lastPurchasesList2.add("Телефон");
+// lastPurchasesList2.add("Нввушники");
+// lastPurchasesList2.add("часи");
+// console.log(lastPurchasesList.get());
+///буде
+// [ 'Телефон', 'Нввушники', 'часи' ]
+
+////Або біль сучасний метод через static
+// class RecentPurchases {
+// 	static #instance = null;
+// 	static #purchases = [];
+// 	static create () {
+// 		if(!this.#instance){
+// 			this.#instance = new RecentPurchases();
+// 		}
+// 		return this.#instance;
+// 	}
+// 	static add(item) {
+// 		this.#purchases.push(item);
+// 	}
+// 	static get() {
+// 		return this.#purchases;
+// 	}
+// }
+// RecentPurchases.create();
+// RecentPurchases.add("Телефон");
+// RecentPurchases.add("Нввушники");
+// RecentPurchases.add("часи");
+// console.log(RecentPurchases.get());
+///буде
+// [ 'Телефон', 'Нввушники', 'часи' ]
+// class Singleton {
+// 	constructor() {
+// 	if (!Singleton.instance) {
+// 	Singleton.instance = this;
+// 	}
+// 	return Singleton.instance;
+// 	}
+// 	}
+// 	const instance1 = new Singleton();
+// 	const instance2 = new Singleton();
+// 	console.log(instance1 === instance2); // true
+
+////Фабрика визначає який клас повинен матити обьєкт при створені і надає загальний клас
+
+// class Button {
+// 	constructor({text, color}){
+// 		this.text = text;
+// 		this.color = color;
+// 	}
+// 	render(){
+// 		return `<button class="color:${this.color};">${this.text}</button>`;
+// 	}
+// }
+// class IconButton {
+// 	constructor({icom, color}){
+// 		this.icon = icom;
+// 		this.color = color;
+// 	}
+// 	render(){
+// 		return `<button class="color:${this.color};"><img src="${this.icon}"/></button>`;
+// 	}
+// }
+////створюємо клас який верішує коли які потрібно взяти властивості де
+///options властивості які ми прописуємо в конструкторі
+//type це статична власти вість яка надає назву і властивості кнопок
+// class ButtonFactory {
+// 	static TYPE = {
+// 		BASIC: "basic",
+// 		ICON: "icon",
+// 	};
+// 	static createButton(type, options){
+// 		if(options.icon){
+// 			return new IconButton(options);
+// 		}
+// 		if(options.text){
+// 			return new Button(options);
+// 		}
+// 		throw new Error(`такого типу кнопки не існує: ${type}`);
+// 		switch (type){
+// 			case this.TYPE.BASIC:
+// 				return new Button(options);
+// 			case this.TYPE.ICON:
+// 				return new IconButton(options);
+// 			default:
+// 				throw new Error(`такого типу кнопки не існує: ${type}`);
+// 		}
+// 	}
+// }
+// const myIconButton = ButtonFactory.createButton(ButtonFactory.TYPE.ICON, {
+// 	color: "red",
+// 	icon: "/icon/my-icon.svg",
+// });
+// console.log(myIconButton);
+///буде
+// iconButton { icon: undefined, color: 'red' }
+// class ButtonFactory {
+// 	static TYPE = {
+// 		BASIC: "basic",
+// 		ICON: "icon",
+// 	};
+// 	static createButton(type, options){
+// 		if(options.icon){
+// 			return new IconButton(options);
+// 		}
+// 		if(options.text){
+// 			return new Button(options);
+// 		}
+// 		throw new Error(`такого типу кнопки не існує: ${type}`);
+// 	}
+// }	
+// const myIconButton1 = ButtonFactory.createButton(ButtonFactory.TYPE.ICON, {
+// 	color: "black",
+// 	icon: "/icon/my-icon124.svg",
+// });
+// console.log(myIconButton1);
+///буде
+// IconButton { icon: undefined, color: 'black' }
+// class Product {
+// 	constructor(name) {
+// 	this.name = name;
+// 	}
+// 	}
+	
+// 	class ProductFactory {
+// 	createProduct(name) {
+// 	return new Product(name);
+// 	}
+// 	}
+	
+// 	const factory = new ProductFactory();
+// 	const product = factory.createProduct("Товар");
+	
+// 	console.log(product instanceof Product); // true
+// 	console.log(product.name); // "Товар"
+
+////Спостерігач. залежність один бага . одна змінна автоматично оновлює всі залажні змінні 
+
+// class User {
+// 	constructor(email){
+// 		this.email = email;
+// 	}
+// 	sendEmail(message){
+// 		console.log(`Відправки на email ${this.email} повідомлення: ${message}`);
+// 	}
+// }
+// class Video {
+// 	constructor(name) {
+// 		this.name = name;
+// 	}
+// }
+// class Channel {
+// 	constructor(name){
+// 		this.name = name;
+// 		this.subscribers - [];
+// 	}
+// 	subscribe(user) {
+// 		//Підписка на канал
+// 		this.subscribers.push(user);
+// 	}
+// 	unsubscribe(user){
+// 		///Відписка від каналу
+// 		this.subscribers = this.subscribers.filter((sub) => sub !== user);
+// 	}
+// 	createVideo(name) {
+// 		///Створення нового відео
+// 		const video = new Video(name);
+// 		this.sendNotify(video);
+// 	}
+// 	sendNotify(video){
+// 		///Відправлення повідомлення підписнику про нове відео
+// 		this.subscribers.forEach((subscriber) => {
+// 			subscriber.sendEmail(
+// 				`Нове відео "${video.name}" на Youtube каналі ${this.name}!`
+// 			);
+// 		});
+// 	}
+// }
+// const channel = new Channel("IT Brains");
+
+// const user1 = new User("netrebko2505@gmail.com");
+// const user2 = new User("a25051075@gmail.com");
+// const user3 = new User("netAlex2505@gmail.com");
+
+// channel.subscribe(user1);
+// channel.subscribe(user2);
+// channel.subscribe(user3);
+// channel.createVideo("уpок по HTML");
+///буде
+// Відправки на email netrebko2505@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// Відправки на email a25051075@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// Відправки на email netAlex2505@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// channel.unsubscribe(user3);
+// console.log("=====");
+// channel.createVideo("уpок по CSS");
+///буде
+// Відправки на email netrebko2505@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// Відправки на email a25051075@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// Відправки на email netAlex2505@gmail.com повідомлення: Нове відео "уpок по HTML" на Youtube каналі IT Brains!
+// =====
+// Відправки на email netrebko2505@gmail.com повідомлення: Нове відео "уpок по CSS" на Youtube каналі IT Brains!
+// Відправки на email a25051075@gmail.com повідомлення: Нове відео "уpок по CSS" на Youtube каналі IT Brains!
+// class Observer {
+// 	update(data) {
+// 	console.log("Отримано оновлення:", data);
+// 	}
+// 	}
+	
+// 	const subject = new Subject();
+// 	const observer1 = new Observer();
+// 	const observer2 = new Observer();
+	
+// 	subject.addObserver(observer1);
+// 	subject.addObserver(observer2);
+	
+// 	subject.notifyObservers("Нові дані");
+	// Виведе:
+	// Отримано оновлення: Нові дані
+	// Отримано оновлення: Нові дані
+
+////Декоротар. дозволяє розширити функціональність об'єкта, не змінюючи сам об'єкт.
+
+// class Caffee {
+// 	name = "Кава";
+// 	cost = 10;  ///Ціна
+// 	cook() {
+// 		console.log(`Приготування ${this.name}`);
+// 		// Логіка приготування кавового напою
+// 	}
+// }
+// class MilkDecorator {
+// 	name = "Лате";
+// 	constructor(coffee, amount) {
+// 		this.coffee = coffee;
+// 		this.amount = amount;
+// 	}
+// 	get name() {
+// 		return `${this.coffee.name}, з  ${this.amount} мл молока`;
+// 	}
+// 	get cost() {
+// 		const milkPrice = 0.05;
+// 		return this.coffee.cost + milkPrice * this.amount;
+// 	}
+// 	cook() {
+// 		console.log(`Приготування ${this.name}`);
+// 		// Логіка приготування кави з молоком
+// 	}
+// }
+// Створення обьєкту базова кава
+// let coffee = new Caffee();
+// console.log(coffee.name);
+// console.log(coffee.cost);
+// coffee.cook();
+// Додовання декоратора молока до кави
+// let latteCoffee = new MilkDecorator(coffee, 300);
+// console.log(latteCoffee.name);
+// console.log(latteCoffee.cost);
+// latteCoffee.cook();
+///буде
+///Кава
+// 10
+// Приготування Кава
+// Кава, з  300 мл молока
+// 25
+// Приготування Кава, з  300 мл молока
+// якщо додати до MilkDecorator (name = "Лате";) буде
+// Лате
+// 25
+// Приготування Лате
+// class Component {
+// 	operation() {
+	
+// 	console.log("Базова операція");
+// 	}
+	
+// 	}
+	
+// 	class Decorator {
+// 	constructor(component) {
+	
+// 	this.component = component;
+// 	}
+	
+// 	operation() {
+// 	this.component.operation();
+// 	console.log("Додаткова операція");
+// 	}
+// 	}
+	
+// 	const component = new Component();
+// 	const decoratedComponent = new Decorator(component);
+	
+// 	decoratedComponent.operation();
+	// Виведе:
+	// Базова операція
+	// Додаткова операція
+
+///Мементо. Коли потрібно зберегти стан об'єкта і відновити його пізніше,
+// зберігаючи приватні дані відповідно.
+
+// class TextEditor {
+// 	#text = "";
+// 	// тримає наш текст з редактора
+// 	set text(text) {
+// 		this.#text = text;
+// 		this.#save();
+// 	// Записує наш текст. При кожному оновленні викликає метод #save
+// 	}
+// 	get text() {
+// 		return this.#text;
+// 	// повертає наш текст
+// 	}
+// 	#save() {
+// 		Snapshot.create(this.text);
+// 	// при кожному оновленні зберігає наш текст в масиві Snapshot
+// 	}
+// 	restore() {
+// 		this.#text = Snapshot.restore().text;
+// 	//  дозволяє відкототися на зад
+// 	}
+// }
+// class Snapshot {
+// 	constructor(text) {
+// 		this.text = text;
+// 	}
+// 	static #snapshots = [];
+// 	// зберігає копії нового текту
+// 	static create(text) {
+// 		this.#snapshots.push(new Snapshot(text));
+// 		// створює новий Snapshot та вкладує його в #snapshots з властивістю
+// 	}
+// 	static restore() {
+// 		this.#snapshots.pop();
+// 		return this.#snapshots[this.#snapshots.length -1];
+// 		// видаляє поточну версію і повертає попередню
+// 	}
+// }
+// const editor = new TextEditor();
+// editor.text = "Це початковий текст ";
+// editor.text = "Редагований текст";
+// editor.text = "Оновлений текст";
+// console.log(editor.text);
+// console.log("=====");
+// editor.restore();
+// console.log(editor.text);
+// editor.restore();
+// console.log(editor.text);
+//буде
+// Оновлений текст
+// =====
+// Редагований текст
+// Це початковий текст
+
+// class Memento {
+// 	constructor(state) {
+// 	this.state = state;
+// 	}
+// 	}
+// 	class Originator {
+// 	constructor() {
+// 	this.state = "";
+// 	}
+// 	setState(state) {
+// 	this.state = state;
+// 	}
+// 	createMemento() {
+// 	return new Memento(this.state);
+// 	}
+// 	restoreMemento(memento) {
+// 	this.state = memento.state;
+// 	}
+// 	}
+// 	const originator = new Originator();
+
+// originator.setState("Стан 1");
+// const memento = originator.createMemento();
+
+// originator.setState("Стан 2");
+// console.log(originator.state); // "Стан 2"
+
+// originator.restoreMemento(memento);
+// console.log(originator.state); // "Стан 1"
+
+// Ланцюжок відповідальності. Коли потрібно реалізувати механізм обробки запитів з можливістю
+// автоматичного перехоплення та передачі запиту між обробниками.
+
+// class Authandler {
+// 	setNextHandler(handler) {
+// 		this.nextHandler = handler;
+// 		return handler;
+// 	}
+// 	login(user, password) {
+// 		if(this.nextHandler){
+// 			return this.nextHandler.login(user, password);
+// 		} else {
+// 			return false;
+// 		}
+// 	}
+// }
+// class TwoFactorAuthandler extends Authandler {
+// 	login(user, password) {
+// 		if (
+// 			user === "johan" &&
+// 			password === "password" &&
+// 			this.isValidTwoFactorCode()
+// 		)
+// 	 	{
+// 			console.log("Вхід дозволено з двофакторною автентіфікацією");
+// 			return true;
+// 		} else {
+// 			return super.login(user, password);
+// 		}
+// 	}
+// 	isValidTwoFactorCode() {
+// 		return true;
+// 	}
+// }
+// const handler = new TwoFactorAuthandler();
+// handler.setNextHandler({
+// 	login: (...arg) => {
+// 		console.log(arg);
+// 	},
+// });
+// handler.login("login", "password");
+//буде
+// [ 'login', 'password' ]
+//чи так
+// handler.setNextHandler({
+// 	login: (login, password) => {
+// 		const result = login === "login" && password === "password" 
+// 		? "користувач увійшов в акаун"
+// 		:"користувач не увійшов в акаун";
+// 		console.log(result);
+// 		return result;
+// 	},
+// });
+// handler.login("login", "password");
+//буде
+//користувач увійшов в акаун
+
+// class RoleHandeler extends Authandler {
+// 	login(user, password){
+// 		if(user === "quest") {
+// 			console.log("Вхід дозволено з роллю гостя");
+// 			return true;
+// 		} else {
+// 			return super.login(user, password);
+// 		}
+// 	}
+// }
+// class CredentialsHandeler extends Authandler {
+// 	login(user, password){
+// 		if(user === "admin" && password === "admin123") {
+// 			console.log("Вхід дозволено за логіном і паролєм");
+// 			return true;
+// 		} else {
+// 			return super.login(user, password);
+// 		}
+// 	}
+// }
+// const handler = new TwoFactorAuthandler();
+// handler.setNextHandler(new CredentialsHandeler());
+// handler.login("admin", "admin123");
+//буде
+//Вхід дозволено за логіном і паролєм
+// const handler = new TwoFactorAuthandler();
+// const handler2 = new CredentialsHandeler();
+// handler2.setNextHandler(new RoleHandeler());
+// handler.setNextHandler(handler2);
+// handler.login("quest", "admin123");
+//буде
+//Вхід дозволено з роллю гостя
+// class HadlerBuilder {
+// 	constructor() {
+// 		this.firstHandler = null;
+// 		this.lastHandler = null;
+// 	}
+// 	add(handler){
+// 		if(!this.firstHandler){
+// 			this.firstHandler = handler;
+// 			this.lastHandler = handler;
+// 		} else {
+// 			this.lastHandler.setNextHandler(handler);
+// 			this.lastHandler = handler;
+// 		}
+// 		return this;
+// 	}
+// 	create() {
+// 		return this.firstHandler;
+// 	}
+// }
+// const hadlerBuilder = new HadlerBuilder();
+// const handler = hadlerBuilder
+//  .add(new CredentialsHandeler())
+//  .add(new TwoFactorAuthandler())
+//  .add(new RoleHandeler())
+//  .create();
+
+//  handler.login("admin", "admin123"); // Вхід дозволено за логіном і паролєм
+//  handler.login("john", "password"); // Вхід дозволено з двофакторною автентіфікацією
+//  handler.login("quest", "quest123"); // Вхід дозволено з роллю гостя
+//  handler.login("user", "password"); // Вхід заборонено
+// // буде
+//Вхід дозволено за логіном і паролєм
+//Вхід дозволено з двофакторною автентіфікацією
+//Вхід дозволено з роллю гостя
+// class Handler {
+// 	setNext(handler) {
+// 	this.nextHandler = handler;
+// 	}
+// 	handleRequest(request) {
+// 	if (this.nextHandler) {
+// 	this.nextHandler.handleRequest(request);
+// 	}
+// 	}
+// 	}
+// 	class ConcreteHandler1 extends Handler {
+// 		handleRequest(request) {
+// 		if (request === "Запит 1") {
+// 		console.log("Обробник 1 обробив запит");
+// 		} else {
+// 		super.handleRequest(request);
+// 		}
+// 		}
+// 		}
+// 		class ConcreteHandler2 extends Handler {
+// 		handleRequest(request) {
+// 		if (request === "Запит 2") {
+// 		console.log("Обробник 2 обробив запит");
+// 		} else {
+// 		super.handleRequest(request);
+// 		}
+// 		}
+// 		}
+// //const handler1 = new ConcreteHandler1();
+// const handler2 = new ConcreteHandler2();
+
+// handler1.setNext(handler2);
+
+// handler1.handleRequest("Запит 1");
+// // Виведе: "Обробник 1 обробив запит"
+
+// handler1.handleRequest("Запит 2");
+// // Виведе: "Обробник 2 обробив запит"
+
+// handler1.handleRequest("Запит 3");
+// Запит буде переданий далі, так як немає відповідного обробника
+
+// Міст. дозволяє розмістити абстракцію і реалізацію в окремі класи, дозволяючи
+// їм мати незалежний функціонал
+// class Abstraction {
+// 	constructor(implementation) {
+	
+// 	this.implementation = implementation;
+// 	}
+	
+// 	operation() {
+// 	const implementationResult = this.implementation.operationImplementation();
+// 	return `Абстракція: ${implementationResult}`;
+// 	}
+// 	}
+	
+// 	class Implementation {
+// 	operationImplementation() {
+	
+// 	return "Реалізація";
+// 	}
+	
+// 	}
+	
+// 	const implementation = new Implementation();
+// 	const abstraction = new Abstraction(implementation);
+	
+// 	console.log(abstraction.operation()); // "Абстракція: Реалізація
+
+// class User {
+// 	constructor(name, message) {
+// 		this.name = name;
+// 		this.message = message;
+// 	}
+// 	sendMessage(message) {
+// 		const formattedMessage = this.formattedMessage(message);
+// 		this.message.sendMessage(formattedMessage);
+// 	}
+// 	formattedMessage(message) {
+// 		return `[${this.name}]: ${message}`;
+// 	}
+// }
+//через СМС
+//через сайт
+//через почту
+// class SMSMessager {
+// 	static sendMessage(message) {
+// 		console.log(`Відправити SMS: ${message}`);
+// 	}
+// }
+// class EmailMessager {
+// 	static sendMessage(message) {
+// 		console.log(`Відправити Email: ${message}`);
+// 	}
+// }
+// const john = new User("john", SMSMessager);
+// const jane = new User("jane", EmailMessager);
+// john.sendMessage("Привіт"); // відправлено SMS: john: Привіт
+// jane.sendMessage("Привіт"); // відправлено Email: jane: Привіт
