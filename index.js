@@ -1438,3 +1438,850 @@
 // const jane = new User("jane", EmailMessager);
 // john.sendMessage("Привіт"); // відправлено SMS: john: Привіт
 // jane.sendMessage("Привіт"); // відправлено Email: jane: Привіт
+
+// Композит. Коли потрібно працювати з деревоподібною структурою об'єктів, де
+// об'єкти та групи об'єктів можуть бути оброблені однаковим чином.
+// class Comment {
+// 	constructor(text) {
+// 		this.text = text;
+// 	}
+// 	display() {
+// 		console.log(`-Коментар: ${this.text}`);
+// 	}
+// }
+// class Video {
+// 	comment = null;
+// 	constructor(title) {
+// 		this.title = title;
+// 	}
+// 	display() {
+// 		console.log(`Відео: ${this.title}`)
+// 		if(this.comment) this.comment.display();
+// 	}
+// }
+// const video = new Video("Навчальне відео");
+// video.comment = new Comment("Дуже корисне відео");
+// video.display();
+// буде
+// Відео: Навчальне відео
+// -Коментар: Дуже корисне відео
+// щоб зробити деревоподібну структуру і дать можливість коментар на коментар
+//  та на коментар. та покращим структуру.
+// class Composite {
+// 	comments = [];
+// 	addComment(comment) {
+// 		this.comments.push(comment);
+// 	}
+// 	removeComment(comment) {
+// 		const index = this.comments.indexOf(comment);
+// 		if(index !== -1) {
+// 			this.comments.splice(index, 1);
+// 		}
+// 	}
+// }
+// class Comment extends Composite{
+// 	constructor(text) {
+	// super();
+// 		this.text = text;
+// 	}
+// 	display() {
+// 		console.log(`-Коментар: ${this.text}`);
+// 		for (const comment of this.comments) {
+// 			comment.display();
+// 		}
+// 	}
+// }
+// class Video extends Composite {
+// 	constructor(title) {
+	// super();
+// 		this.title = title;
+// 	}
+// display() {
+// 	console.log(`Відео: ${this.title}`)
+// 	for (const comment of this.comments) {
+// 		comment.display();
+// 	}
+// }
+// }
+// const video = new Video("Навчальне відео");
+// video.addComment(new Comment("Дуже корисне відео"));
+// video.addComment(new Comment("Дуже корисне відео1"));
+
+// video.comments[0].addComment(new Comment("Відповідь: Згоден!"));
+// video.display();
+// буде
+//Відео: Навчальне відео
+// -Коментар: Дуже корисне відео
+// -Коментар: Відповідь: Згоден!
+// -Коментар: Дуже корисне відео1
+// console.log(video.comments);
+// буде
+//[
+// 	Comment { comments: [ [Comment] ], text: 'Дуже корисне відео' },
+// 	Comment { comments: [], text: 'Дуже корисне відео1' }
+//   ]
+// class Component {
+// constructor(name) {
+// 	this.name = name;
+// 	}
+// 	operation() {
+// 	console.log(`Виконується операція для ${this.name}`);
+// 	}
+// 	}
+// 	class Composite extends Component {
+// 	constructor(name) {
+// 	super(name);
+// 	this.children = [];
+// 	}
+// 	add(component) {
+// 	this.children.push(component);
+// 	}
+// 	remove(component) {
+// 	this.children = this.children.filter((child) => child !== component);
+// 	}
+// 	operation() {
+// 	console.log(`Виконується операція для ${this.name}`);
+// 	this.children.forEach((child) => child.operation());
+// 	}
+// 	}
+// const leaf1 = new Component("Листок 1");
+// const leaf2 = new Component("Листок 2");
+// const composite = new Composite("Композит");
+
+// composite.add(leaf1);
+// composite.add(leaf2);
+
+// composite.operation();
+// Виведе:
+// Виконується операція для Композит
+// Виконується операція для Листок 1
+// Виконується операція для Листок 2
+
+// Муха. спільно використовувати об'єкт-одиночка замість створення окремих унікальних об'єктів
+// для кожного випадку використання. Коли потрібно економити пам'ять, оптимізуючи велику кількість
+// дрібних об'єктів, використовуючи спільні "легкі" частини.
+
+// class Category {
+// 	static #categories = {};
+// 	constructor(name) {
+// 		this.name = name;
+// 	}
+// 	static create(name) {
+// 		if(!this.#categories[name]) {
+// 			this.#categories[name] = new Category(name);
+// 		}
+// 		return this.#categories[name];
+// 	}
+// }
+// const electronics = Category.create("Electronics");
+// const books = Category.create("Books");
+// const electronics2 = Category.create("Electronics");
+
+// console.log(electronics, books, electronics2);
+// console.log(electronics === electronics2);
+// // Виведе:
+// // Category { name: 'Electronics' } Category { name: 'Books' } Category { name: 'Electronics' }
+// // true
+// class Product {
+// 	constructor(name, category) {
+// 		this.name = name;
+// 		this.category = category;
+// 	}
+// 	display() {
+// 		console.log(`Product: ${this.name}, Category: ${this.category.name}`)
+// 	}
+// }
+// const product1 = new Product("Laptop", electronics);
+// const product2 = new Product("Headphones", electronics);
+// const product3 = new Product("Book Title", books);
+// const product4 = new Product("Smartphone", electronics2);
+// product1.display();
+// product2.display();
+// product3.display();
+// product4.display();
+// console.log(product1.category === product4.category);
+// Виведе:
+// Product: Laptop, Category: Electronics
+// Product: Headphones, Category: Electronics
+// Product: Book Title, Category: Books
+// Product: Smartphone, Category: Electronics
+// true
+// const list = [product1, product2, product3, product4].filter((product) => product.category === Category.create("Electronics"));
+// console.log(list);
+// Виведе:
+// [
+// 	Product {
+// 	  name: 'Laptop',
+// 	  category: Category { name: 'Electronics' }
+// 	},
+// 	Product {
+// 	  name: 'Headphones',
+// 	  category: Category { name: 'Electronics' }
+// 	},
+// 	Product {
+// 	  name: 'Smartphone',
+// 	  category: Category { name: 'Electronics' }
+// 	}
+//   ]
+// class Flyweight {
+// 	constructor(sharedState) {
+// 	this.sharedState = sharedState;
+// 	}
+// 	operation(uniqueState) {
+// 	console.log(`Виконується операція зі спільним станом
+// 	${this.sharedState} та унікальним станом ${uniqueState}`);
+// 	}
+// 	}
+// 	class FlyweightFactory {
+// 		constructor() {
+// 		this.flyweights = {};
+// 		}
+// 		getFlyweight(sharedState) {
+// 		if (!this.flyweights[sharedState]) {
+// 		this.flyweights[sharedState] = new Flyweight(sharedState);
+// 		}
+// 		return this.flyweights[sharedState];
+// 		}
+// 		}
+// 		const factory = new FlyweightFactory();
+// const flyweight1 = factory.getFlyweight("спільний стан 1");
+// flyweight1.operation("унікальний стан 1");
+// const flyweight2 = factory.getFlyweight("спільний стан 2");
+// flyweight2.operation("унікальний стан 2");
+// const flyweight3 = factory.getFlyweight("спільний стан 1");
+// flyweight3.operation("унікальний стан 3");
+// Виведе:
+// Виконується операція зі спільним станом “спільний стан 1”та унікальним станом “унікальний стан 1”
+// Виконується операція зі спільним станом “спільний стан 2“та унікальним станом “унікальний стан 2“
+// Виконується операція зі спільним станом “спільний стан 1“та унікальним станом “унікальний стан 3“
+
+// Шаблонний метод. 
+// визначає загальну структуру алгоритму, залишаючи певні кроки реалізації підкласам. Клас-шаблон
+// визначає основну логіку алгоритму, а підкласи можуть змінювати або розширювати окремі кроки.
+// Коли потрібно визначити загальну структуру алгоритму, але дозволити підкласам змінювати деякі кроки або додавати нові.
+// class CoffeeMachine {
+// 	prepareCaffee() {
+// 		this.boilWater();
+// 		this.grindCaffeeBeans();
+// 		this.#brewCaffee();
+// 		this.pourIntoCup();
+// 		this.addingredients();
+// 		this.serveCaffee();
+// 	}
+// 	boilWater() {
+// 		console.log("Boiling water...");
+// 	}
+// 	grindCaffeeBeans() {
+// 		console.log("Grinding coffee beants...");
+// 	}
+// 	#brewCaffee() {
+// 		console.log("Brewing coffee...");
+// 	}
+// 	pourIntoCup() {
+// 		console.log("Pouring coffee info cup...");
+// 	}
+// 	addingredients() {
+// 		// цей метод залишається пустим і може бути перезаписаний в підкласах
+// 	}
+// 	serveCaffee() {
+// 		console.log("Coffe served!");
+// 	}
+// }
+// class LatteMachine extends CoffeeMachine {
+// 	addingredients() {
+// 		console.log("Adding milk to make a latte...");
+// 		//...... 
+// 	}
+// 	// .....
+// }
+// class CappuccinoMachine extends CoffeeMachine {
+// 	addingredients() {
+// 		console.log("Adding frothed milk and sprinkle of cocoa powder to make a cappuccino...");
+// 		//...... 
+// 	}
+// 	// .....
+// }
+// const latteMachine = new LatteMachine();
+// latteMachine.prepareCaffee();
+// const cappuccinoMachine = new CappuccinoMachine();
+// cappuccinoMachine.prepareCaffee();
+// Виведе:
+// Coffe served!
+// Boiling water...
+// Grinding coffee beants...
+// Brewing coffee...
+// Pouring coffee info cup...
+// Adding frothed milk and sprinkle of cocoa powder to make a cappuccino...
+// Coffe served!
+
+// Приклад
+// class AbstractClass {
+// 	templateMethod() {
+// 	this.baseOperation1();
+// 	this.requiredOperation1();
+// 	this.baseOperation2();
+// 	this.hook();
+// 	}
+// 	baseOperation1() {
+// 	console.log("Виконується базова операція 1");
+// 	}
+// 	baseOperation2() {
+// 	console.log("Виконується базова операція 2");
+// 	}
+// 	hook() {}
+// 	// Метод, який повинен бути реалізований підкласами
+// 	requiredOperation1() {
+// 	throw new Error("Має бути реалізований");
+// 	}
+// 	}
+// class ConcreteClass extends AbstractClass {
+// 	requiredOperation1() {
+// 	console.log("Виконується обов'язкова операція 1");
+// 	}
+// 	hook() {
+// 	console.log("Виконується хук");
+// 	}
+// 	}
+// const concreteClass = new ConcreteClass();
+// concreteClass.templateMethod();
+// Виведе:
+// Виконується базова операція 1
+// Виконується обов'язкова операція 1
+// Виконується базова операція 2
+// Виконується хук
+
+// Відвідувач.   дозволяє додавати нові операції до групи об'єктів, не змінюючи самі об'єкти. 
+// Відвідувач розділяє алгоритм від представлення об'єктів, що дозволяє додавати нові операції, не змінюючи класи
+// цих об'єктів. Коли потрібно виконувати операції над групою об'єктів різними способами, 
+// // але не хочете залежати від конкретних класів цих об'єктів.
+// class TextFile {
+// 	constructor(name, content) {
+// 		this.name = name;
+// 		this.comment = content;
+// 	}
+// }
+// class ImageFile {
+// 	constructor(name, size) {
+// 		this.name = name;
+// 		this.size = size; // розмір файлу
+// 	}
+// }
+// class VideoFile {
+// 	constructor(name, duration) {
+// 		this.name = name;
+// 		this.duration = duration; // тривалість файлу
+// 	}
+// }
+// class TextEditor {
+// 	// constructor() {
+// 	// 	this.files = [];
+// 	// }
+// // чи можно так
+// 	files = [];
+// 	addFile(file) {
+// 	this.files.push(file)
+// 	}
+// Додаемо підкласи
+// 	readTextFile(file) {
+// 		console.log(`Text file: ${file.name}, size: ${file.comment.lenght} characters`);
+// 	}
+// 	readImageFile(file) {
+// 		console.log(`Image file: ${file.name}, size: ${file.size} KB`);
+// 	}
+// 	readVideoFile(file) {
+// 		console.log(`Video file: ${file.name}, size: ${file.duration} minutes`);
+// 	}
+// 	readFiles() {
+// 		for(const file of this.files) {
+// 			if(file instanceof TextFile) {
+// 				this.readTextFile(file);
+// 			} else if(file instanceof ImageFile) {
+// 				this.readImageFile(file);
+// 			} else if(file instanceof VideoFile) {
+// 				this.readVideoFile(file);
+// 			}
+// 		}
+// 	}
+// }
+// const textEditor = new TextEditor();
+// const textFile = new TextFile("document.txt", "Loren ipsum dolor sit amet...");
+// const imageFile = new ImageFile("image.jpg", 1024);
+// const videoFile = new VideoFile("video.mp4", 60);
+// textEditor.addFile(textFile);
+// textEditor.addFile(imageFile);
+// textEditor.addFile(videoFile);
+// console.log(textEditor.files);
+// // Виведе:
+// [
+// 	TextFile {
+// 		name: 'document.txt',
+// 		comment: 'Loren ipsum dolor sit amet...'
+// 	},
+// 	ImageFile { name: 'image.jpg', size: 1024 },
+// 	VideoFile { name: 'video.mp4', duration: 60 }
+// ]
+// textEditor.readFiles();
+// // Виведе:
+// Text file: document.txt, size: undefined characters
+// Image file: image.jpg, size: 1024 KB
+// Video file: video.mp4, size: 60 minutes
+// Приклад 
+// class Element {
+// 	accept(visitor) {
+// 	visitor.visit(this);
+// 	}
+// 	}
+// class ConcreteElementA extends Element {}
+// class ConcreteElementB extends Element {}
+// class Visitor {
+// visit(element) {
+// throw new Error("Метод visit має бути реалізований");
+// }
+// }
+// class ConcreteVisitor1 extends Visitor {
+// 	visit(element) {
+// 	console.log("Виконується відвідувач 1 для",
+// 	element.constructor.name);
+// 	}
+// 	}
+// class ConcreteVisitor2 extends Visitor {
+// visit(element) {
+// console.log("Виконується відвідувач 2 для",
+// element.constructor.name);
+// }
+// }
+// const elements = [new ConcreteElementA(), new ConcreteElementB()];
+
+// const visitor1 = new ConcreteVisitor1();
+// const visitor2 = new ConcreteVisitor2();
+
+// elements.forEach((element) => {
+// element.accept(visitor1);
+// element.accept(visitor2);
+// });
+// Виведе:
+// Виконується відвідувач 1 для ConcreteElementA
+// Виконується відвідувач 2 для ConcreteElementA
+// Виконується відвідувач 1 для ConcreteElementB
+// Виконується відвідувач 2 для ConcreteElementB
+
+// Адаптер. дозволяє об'єктам з інтерфейсом несумісним з іншими об'єктами
+// працювати разом, перетворюючи інтерфейс одного об'єкта на інтерфейс, очікуваний іншим об'єктом.
+// Коли потрібно забезпечити співпрацю несумісних об'єктів, які мають різні інтерфейси.
+// class ElectronicPaymentSystem {
+// 	makePayment(amount) {
+// 		const convertedAmount = this.convertAmount(amount);
+// 		console.log(`Making electronic payment: ${convertedAmount}`);
+// 	}
+// 	convertAmount(amount) {
+// 		// Логіка конвертації суми платежу
+// 		return amount * 1.2; //Припустимо, що необхідна конвертація у відсотках
+// 	}
+// }
+// class OrtherPaymentSystem {
+// 	submit(amount) {
+// 		console.log(`Submitting payment reguest: ${amount}`);
+// 	}
+// }
+// const electronicPaymentSystem = new ElectronicPaymentSystem();
+// electronicPaymentSystem.makePayment(100); ///
+// Виведе: Making electronic payment: 120
+// class PaymentAdapter {
+// 	constructor(paymentSystem) {
+// 		this.paymentSystem = paymentSystem;
+// 	}
+// 	makePayment(amount) {
+// 		const convertedAmount = this.convertAmount(amount);
+// 		this.paymentSystem.submit(convertedAmount);
+// 	}
+// 	convertAmount(amount) {
+// 		return amount * 1.2;
+// 	}
+// }
+// class Order {
+// 	constructor(amount) {
+// 		this.amount = amount; //кількість грошей(ціна)
+		// вирішуємо через яку платіжну систему
+	// 	if(amount < 100) {
+	// 		this.paymentSistem = new PaymentAdapter(new OrtherPaymentSystem());
+	// 	} else {
+	// 		this.paymentSistem = new ElectronicPaymentSystem();
+	// 	}
+	// }
+	// makePayment() {
+		// if(this.paymentSistem.makePayment) {
+		// 	return this.paymentSistem.makePayment(this.amount);
+		// } 
+		// if(this.paymentSistem.submit) {
+		// 	return this.paymentSistem.submit(this.amount);
+		// } 
+		// Чи краще написати так 
+// 	 return this.paymentSistem.makePayment(this.amount);
+// 	}
+// }
+// const order = new Order(1000);
+// order.makePayment();
+// Виведе: Making electronic payment: 1200
+// const order1 = new Order(1000);
+// order1.makePayment();
+// const order2 = new Order(10);
+// order2.makePayment();
+// // Виведе:
+// // Making electronic payment: 1200
+// // Submitting payment reguest: 12
+// class Target {
+// 	request() {
+// 	return "Цільовий об'єкт";}
+// 	}
+// 	class Adaptee {
+// 	specificRequest() {
+// 	return "Адаптований об'єкт";}
+// 	}
+// 	class Adapter extends Target {
+// 		constructor(adaptee) {
+// 		super();
+// 		this.adaptee = adaptee;	}
+// 		request() {
+// 		const specificResult = this.adaptee.specificRequest();
+// 		return `Адаптер: ${specificResult}`;}
+// 		}
+// const adaptee = new Adaptee();
+// const adapter = new Adapter(adaptee);
+// console.log(adapter.request()); // "Адаптер: Адаптований об'єкт"
+
+//Стратегія.  дозволяє визначати різні алгоритми та забезпечує можливість обміну їх під час виконання програми. 
+// Коли потрібно використовувати різні алгоритми з можливістю зміни алгоритму в процесі роботи.
+// class ShoppingCart {
+	// constructor() {
+	// 	this.items =[];
+	// }
+	//Корзина покупок на сайті. чи краще так
+	// items =[];
+	// addItem(item) {
+	// 	this.items.push(item);
+	// }
+	// discountStrategy(price) {
+	// return price > 100 ? price * 0.9 : price
+	// }
+	// calculateTotalPrice() {
+		// let totalPrice = 0;
+		// for (const item of this.items) {
+		// 	totalPrice += item.price;
+		// }
+		// можно замінити на такий код. через reduce який за acc яка за замовченняи 0 додає item.price
+	// const totalPrice = this.items.reduce((acc, item) => acc + item.price, 0)
+	// const finalPrice = totalPrice; // потрібно для маштабування (сюди можно додати знижку и тд)
+	// return finalPrice;
+	// чи взагалі ящо не потрібно маштабування можно записати так
+	// return this.items.reduce((acc, item) => acc + item.price, 0);
+	//якщо потрібно щоб врахувалась знижка (пройшов код через discountStrategy)
+// 	const price = this.items.reduce((acc, item) => acc + item.price, 0);
+// 	return this.discountStrategy(price);
+// 	}
+// }
+// const shoppingCart1 = new ShoppingCart();
+// shoppingCart1.addItem({name: "Product 1", price: 100});
+// shoppingCart1.addItem({name: "Product 2", price: 50});
+// console.log(shoppingCart1.calculateTotalPrice()); //150 // зі знижкою 135
+
+// class ShoppingCart {
+// 	constructor(discountStrategy) {
+// 		this.discountStrategy = discountStrategy;
+// 		this.items = [];
+// 	}
+// 	addItem(item) {
+// 		this.items.push(item);
+// 	}
+// 	calculateTotalPrice() {
+// 		const price = this.items.reduce((acc, item) => acc + item.price, 0);
+// 		return this.discountStrategy.calculateDiscount(price);
+// 	}
+// }
+// class DiscountStrategy {
+// 	calculateDiscount(price) {
+// 		return price;
+// 	}
+// }
+// //Стратегія знижки для звичайних клієнтів
+// class RegularDiscountStrategy extends DiscountStrategy {
+// 	calculateDiscount(price) {
+// 		return price * 0.9; //10% знижка
+// 	}
+// }
+// //Стратегія знижки для прєміум клієнтів
+// class PremiumDiscountStrategy extends DiscountStrategy {
+// 	calculateDiscount(price) {
+// 		return price * 0.8; //20% знижка
+// 	}
+// }
+// //Стратегія знижки для нових клієнтів
+// class NewCustomerDiscountStrategy extends DiscountStrategy {
+// 	calculateDiscount(price) {
+// 		return price * 0.95; //5% знижка
+// 	}
+// }
+// const shoppingCart1 = new ShoppingCart(new RegularDiscountStrategy);
+// const shoppingCart1 = new ShoppingCart(new PremiumDiscountStrategy);
+// const shoppingCart1 = new ShoppingCart(new NewCustomerDiscountStrategy);
+// shoppingCart1.addItem({name: "Product 1", price: 100});
+// shoppingCart1.addItem({name: "Product 2", price: 50});
+// console.log(shoppingCart1.calculateTotalPrice());// 135 // 120  // 142.5
+
+// class Strategy {
+// 	execute() {
+// 	throw new Error("Метод execute має бути реалізований");}
+// }
+// class ConcreteStrategy1 extends Strategy {
+// execute() {
+// console.log("Виконується стратегія 1");}
+// }
+// class ConcreteStrategy2 extends Strategy {
+// execute() {
+// console.log("Виконується стратегія 2");}
+// }
+// class Context {
+// 	constructor(strategy) {
+// 	this.strategy = strategy;}
+// 	executeStrategy() {
+// 	this.strategy.execute();}
+// }
+// const strategy1 = new ConcreteStrategy1();
+// const strategy2 = new ConcreteStrategy2();
+// const context1 = new Context(strategy1);
+// const context2 = new Context(strategy2);
+// context1.executeStrategy();
+// // Виведе: "Виконується стратегія 1"
+// context2.executeStrategy();
+// // Виведе: "Виконується стратегія 2"
+
+//Ітератор. надає спосіб послідовного доступу до елементів колекції без розкриття його внутрішньої структури.
+//Коли потрібно отримати доступ до елементів колекції в однаковому порядку, без залежності від типу або структури цієї колекції.
+// class User {
+// 	constructor(name, email, password) {
+// 		this.name = name;
+// 		this.email = email;
+// 		this.password = password;
+// 	}
+// }
+// //класс для тримання группи користувачив
+// class UserGroup {
+// 	users = []; // зі static мимаємо спільну группу і звертатися до неї будь де в коді. без можно робити різні групи
+// 	addUser(user) {
+// 		this.users.push(user);
+// 	}
+// }
+// const group1 = new UserGroup();
+// group1.addUser(new User("John Doc", "john@gmail.com", "12345qwert"));
+// const group2 = new UserGroup();
+// group2.addUser(new User("Jone Smith", "jani@gmail.com", "qwert12345"));
+// console.log(group1, group2);
+// Виведе:
+// UserGroup {
+// 	users: [
+// 	  User {
+// 		name: 'John Doc',
+// 		email: 'john@gmail.com',
+// 		password: '12345qwert'
+// 	  }
+// 	]
+//   } UserGroup {
+// 	users: [
+// 	  User {
+// 		name: 'Jone Smith',
+// 		email: 'jani@gmail.com',
+// 		password: 'qwert12345'
+// 	  }
+// 	]
+//   }
+// Якщо додамо в одну группу 
+// const group = new UserGroup();
+// group.addUser(new User("John Doc", "john@gmail.com", "12345qwert"));
+// group.addUser(new User("Jone Smith", "jani@gmail.com", "qwert12345"));
+// console.log(group);
+// Виведе:
+// UserGroup {
+// 	users: [
+// 	  User {
+// 		name: 'John Doc',
+// 		email: 'john@gmail.com',
+// 		password: '12345qwert'
+// 	  },
+// 	  User {
+// 		name: 'Jone Smith',
+// 		email: 'jani@gmail.com',
+// 		password: 'qwert12345'
+// 	  }
+// 	]
+//   }
+// якщо потрідно вивести паприклад список імен группи
+// console.log(group.users.map((user) => user.name).join(","));//якщо не додавати .join(",") виведе в вигляді масиву.
+// Виведе:
+//John Doc,Jone Smith
+
+// class User {
+// 	constructor(name, email, password) {
+// 		this.name = name;
+// 		this.email = email;
+// 		this.password = password;
+// 	}
+// }
+// class UserGroup {
+// 	users = []; // зі static мимаємо спільну группу і звертатися до неї будь де в коді. без можно робити різні групи
+// 	addUser(user) {
+// 		this.users.push(user);
+// 	}
+// }
+// //класс який правильно проітерує группу і не видає приватні данні.
+// class UserIterator {
+// 	// #names = null;
+// 	#users = null;
+// 	#currentIndex = 0;
+// 	constructor(userGroup) {
+// 		// this.#names = userGroup.map((user) => user.name);//передаємо в names масив користувачів user.name
+// 		//або через user
+// 		this.#users = userGroup.users;
+// 	}
+// 	#hasHext() {
+// 		return this.#currentIndex < this.#users.lenght;
+// 	}
+// 	next() {
+// 		if(this.#hasHext()) {
+// 			const name = this.#users(this.#currentIndex).name;  //якщо через user додаємо .name
+// 			this.#currentIndex++;
+// 			return name;
+// 		}
+// 		return null;
+// 	}
+// 	list() {
+// 		return this.#users.map((user) => user.name).join(",");
+// 	}
+// }
+// const group = new UserGroup();
+// group.addUser(new User("John Doc", "john@gmail.com", "12345qwert"));
+// group.addUser(new User("Jone Smith", "jani@gmail.com", "qwert12345"));
+// console.log(group.users.map((user) => user.name).join(","));
+// const iteraror = new UserIterator(group);
+// console.log(iteraror.next());//John Doc
+// console.log(iteraror.next());//Jone Smith
+// console.log(iteraror.next());//null
+// console.log(iteraror.list());//John Doc,Jone Smith
+
+// class Iterator {
+// 	constructor(collection) {
+// 	this.collection = collection;
+// 	this.index = 0;}
+// 	hasNext() {
+// 	return this.index < this.collection.length;}
+// 	next() {
+// 	const item = this.collection[this.index];
+// 	this.index++;
+// 	return item;}
+// }
+// class Collection {
+// 	constructor(items) {
+// 	this.items = items;}
+// 	createIterator() {
+// 	return new Iterator(this.items);}
+// }
+// const collection =
+// new Collection(["Елемент 1", "Елемент 2", "Елемент 3"]);
+// const iterator = collection.createIterator();
+// while (iterator.hasNext()) {
+// console.log(iterator.next());
+// }
+// Виведе:
+// Елемент 1
+// Елемент 2
+// Елемент 3
+
+//Медіатор//   визначає об'єкт, який інкапсулює взаємодію між групою об'єктів. Медіатор
+// сприяє слабкій залежності між цими об'єктами, дозволяючи спілкуватися з ними через централізовану точку.
+// Коли потрібно реалізувати взаємодію між групою об'єктів з меншою залежністю між ними та одним централізованим 
+// об'єктом-медіатором.
+
+// class User {
+// 	constructor(name, chat) {
+// 		this.name = name;
+// 		this.chat = chat; //додаємо медіатор
+// 	}
+// 	sendMessage(message) {
+// 		console.log(`${this.name} відправив повідомлення ${message}`);
+// 		return this.chat.sendMessage(this, message);
+// 		//.....
+// 	}
+// 	//Прийняття повідомлення від іншого користувача
+// 	receiveMessage(user, message) {
+// 		console.log(`${this.name} отримав повідомлення від ${user.name}: ${message}`);
+// 	}
+// }
+// class Chat {
+// 	constructor() {
+// 		this.users = [];
+// 	}
+// 	///Додавання користувача до чату
+// 	addUser(user) {
+// 		this.users.push(user);
+// 	}
+// 	///відправка повідомлення в чат
+// 	sendMessage(sender, message) {
+// 		for(const user of this.users) {
+// 			if(user !== sender) {
+// 				user.receiveMessage(sender, message);
+// 				///відправка повідомлення в Message
+// 				///...
+// 			}
+// 		}
+// 	}
+// }
+// const chatMediator = new Chat();
+// const user1 = new User("John Doc", chatMediator);
+// const user2 = new User("Jone Smith", chatMediator);
+// const user3 = new User("Alex Net", chatMediator);
+// chatMediator.addUser(user1);
+// chatMediator.addUser(user2);
+// chatMediator.addUser(user3);
+// user1.sendMessage("Привіт, всім!");
+// user2.sendMessage("Привіт, John Doc!");
+// Виведе:
+// John Doc відправив повідомлення Привіт, всім!
+// Jone Smith отримав повідомлення від John Doc: Привіт, всім!
+// Alex Net отримав повідомлення від John Doc: Привіт, всім!
+// Jone Smith відправив повідомлення Привіт, John Doc!
+// John Doc отримав повідомлення від Jone Smith: Привіт, John Doc!
+// Alex Net отримав повідомлення від Jone Smith: Привіт, John Doc!
+
+// class Mediator {
+// 	constructor() {
+// 	this.colleague1 = null;
+// 	this.colleague2 = null;
+// 	}
+// 	setColleague1(colleague) {
+// 	this.colleague1 = colleague;
+// 	}
+// 	setColleague2(colleague) {
+// 	this.colleague2 = colleague;
+// 	}
+// 	send(message, colleague) {
+// 	if (colleague === this.colleague1) {
+// 	this.colleague2.notify(message);
+// 	} else {
+// 	this.colleague1.notify(message);}
+// 	}
+// }
+// class Colleague {
+// 	constructor(mediator) {
+// 	this.mediator = mediator;}
+// 	send(message) {
+// 	this.mediator.send(message, this);}
+// 	notify(message) {
+// 	console.log(`Повідомлення отримано: ${message}`);}
+// 	}	
+// const mediator = new Mediator();
+// const colleague1 = new Colleague(mediator);
+// const colleague2 = new Colleague(mediator);
+// mediator.setColleague1(colleague1);
+// mediator.setColleague2(colleague2);
+// colleague1.send("Вітання!");
+// // Виведе: "Повідомлення отримано: Вітання!"
+// colleague2.send("Привіт!");
+// // Виведе: "Повідомлення отримано: Привіт!"
