@@ -2285,3 +2285,427 @@
 // // Виведе: "Повідомлення отримано: Вітання!"
 // colleague2.send("Привіт!");
 // // Виведе: "Повідомлення отримано: Привіт!"
+
+////Цикл подій (Event loop)
+
+// function consolelog() {
+// 	console.log("4");
+// 	console.log("5");
+// 	console.log("6");
+// }
+// console.log("1");
+// console.log("2");
+// console.log("3");
+// consolelog();
+// Виведе: 
+// 1
+// 2
+// 3
+// 4
+// 5
+// 6
+// for (let i = 0; i < 1000; i++) {
+// 	console.log(i);
+// }
+
+// console.log("Перший");
+// setTimeout(() => {
+// 	console.log("Другий"); // затримка в часі на виконання Web/node API
+// }, 1000 * 2);
+// console.log("Третій");
+
+// setTimeout(() => {
+// 		console.log("Перший"); 
+// 	}, 0);
+// setTimeout(() => {
+// 	console.log("Другий"); 
+// }, 0);
+// console.log("Третій");
+// console.log("Четвертій");
+// setImmediate(() => {  ///Має меньший пріоритет якщо в setTimeout 0 час
+// 	console.log("П'ятий"); 
+// }, 0);
+// setTimeout(() => {
+// 	console.log("Шостий");
+// }, 0);
+// console.log("Сьомий");
+// Виведе: 
+// Третій
+// Четвертій
+// Сьомий
+// Перший
+// Другий
+// Шостий
+// П'ятий
+// setTimeout(() => {
+// 			console.log("Перший"); 
+// 		}, 0);
+// setInterval(() => {
+// 	console.log("Другий"); ///робе повтори через певний ынтервал
+// }, 1000);
+// console.log("Третій");
+// console.log("Четвертій");
+// setImmediate(() => {  
+// 	console.log("П'ятий"); 
+// }, 0);
+// // Виведе:
+// Третій
+// Четвертій
+// Перший
+// П'ятий
+// Другий
+// Другий
+// Другий
+// Другий ,безкінечна функція. щоб зупинити
+
+// setImmediate(() => {  
+// 	console.log("Перший"); 
+// })
+// const itervalid =  setInterval(() => {
+// 	console.log("П'ятий"); ///робе повтори через певний ынтервал
+// }, 1000);
+// setTimeout(() => {
+// 	console.log("Другий"); 
+// 	clearInterval(itervalid); //відключає повтор через інтервал
+// }, 5000);
+// console.log("Третій");
+// console.log("Четвертій");
+// // Виведе:
+// Третій
+// Четвертій
+// Перший   
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// Другий
+// const immediateId = setImmediate(() => {  
+// 	console.log("Перший"); 
+// });
+// const itervalId =  setInterval(() => {
+// 	console.log("П'ятий"); ///робе повтори через певний ынтервал
+// }, 1000);
+// setTimeout(() => {
+// 	console.log("Другий"); 
+// 	clearInterval(itervalId); //відключає повтор через інтервал
+// }, 5000);
+// console.log("Третій");
+// console.log("Четвертій");
+// clearImmediate(immediateId);
+// // Виведе:
+// Третій
+// Четвертій
+// Третій
+// Четвертій
+// Перший
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// П'ятий
+// Другий
+// Другий
+
+//Управління асинхронними операціями
+
+// function loadFile(filename, callback) {   /// функція з імям filename та callback функцією
+// 	try {                                /// try-catch функція яка перевіряє чи виконується функція (чи є файл на компі)
+// 		console.log(`Заватаження файлу ${filename}...`);
+// 		setTimeout(() => callback(null, `Вміст файлу ${filename}`), 2000);// ассінхронна функція з затримкою 2000 мс
+// 	} catch (e) {
+// 		callback(e);  ///
+// 	}
+// }
+// // loadFile("example.txt", function(error, content) {// чи можна так loadFile("example.txt", (error, content) => {  //// callback функція
+// // 	if(error) {                                      /////
+// // 		console.error("Помилка завантаження файлу", error);  ///
+// // 	} else {
+// // 		console.log("Файл завантажено успішно!");  ///
+// // 		console.log("Вміст файлу:", content);
+// // 	}
+// // });
+// // Виведе:
+// // Заватаження файлу example.txt...
+// // Файл завантажено успішно!
+// // Вміст файлу: Вміст файлу example.txt
+// function convertFile(content, callback) { //
+// 	setTimeout(function() {
+// 		//Конвертація файлу...
+// 		callback(null, `Конвертований вміст: ${content.toUpperCase()}`);
+// 	}, 1000);
+// }
+// function saveFile(convertedContent, callback) { //
+// 	setTimeout(function() {
+// 		//Збереження файлу...
+// 		callback();
+// 	}, 1500);
+// }
+// function sendFileToClient(callback) { //
+// 	setTimeout(function() {
+// 		//Відправка данних в інтерфейс
+// 		callback();
+// 	}, 500);
+// }
+// // тоді буде такий код
+
+// loadFile("example.txt", function(error, content) {// чи можна так loadFile("example.txt", (error, content) => {  //// callback функція
+// 	if(error) {                                      /////
+// 		console.error("Помилка завантаження файлу", error);  ///
+// 	} else {
+// 		console.log("Файл завантажено успішно!");  ///
+// 		console.log("Вміст файлу:", content);
+
+// 		convertFile(content, (error, convertedContent) => {
+// 			if(error) {                                     
+// 				console.error("Помилка конвертації файлу", error);  ///
+// 			} else {
+// 				console.log("Файл успішно сконвертовано!");  ///
+// 				console.log("Конвертований вміст:", convertedContent);
+// 			saveFile(convertedContent, (error) => {
+// 				if(error) {                                     
+// 					console.error("Помилка збереження файлу", error);  ///
+// 				} else {
+// 					console.log("Файл успішно сбережено!");
+// 					sendFileToClient((error) => {
+// 						if(error) {                                     
+// 							console.error("Помилка відправки файлу клієнту:", error);  ///
+// 						} else {
+// 							console.log("Файл успішно відправлено клієнту!");
+// 						}
+// 					});
+// 				}				///
+// 			});					///		Пекельна піраміда	
+// 		}						///
+// 	 });
+// 	}	
+// });
+// Виведе:
+// Заватаження файлу example.txt...
+// Файл завантажено успішно!
+// Вміст файлу: Вміст файлу example.txt
+// Файл успішно сконвертовано!
+// Конвертований вміст: Конвертований вміст: ВМІСТ ФАЙЛУ EXAMPLE.TXT
+// Файл успішно сбережено!
+// Файл успішно відправлено клієнту!
+
+// // Обіцянка (Promise) //яка буде вирішена (resolved) або відхилена (rejected) чи "pending" (очіува::я):
+// const loadFile = (filename) => new Promise((resolve, reject) => {
+// 	console.log(`Заватаження файлу ${filename}...`);
+// 	//якщо  вставляємо reject("error");
+// 	// reject("error");
+// 	setTimeout(() => resolve(`Вміст файлу ${filename}`), 2000);
+// 	// reject(new Error()); ///чи просто тукст "Помилка конвертації файлу" чи просто error
+// })
+// const result = loadFile("image.pmg");
+// console.log(result);
+// setTimeout(() => console.log(result), 3000);
+// Виведе:
+// Заватаження файлу image.pmg...
+// Promise { <pending> }
+// Promise { 'Вміст файлу image.pmg' }
+
+// const result = loadFile("image.pmg");
+// result.then((data) => {
+// 	console.log(data);},
+// 	(error) => {
+// 		console.log(error);
+// });
+// Виведе:
+// Заватаження файлу image.pmg...
+// Вміст файлу image.pmg
+// з reject("error");
+// Заватаження файлу image.pmg...
+// error
+// result.then((data) => {
+// 	return data.toUpperCase();
+// }).then((data) => {
+// 	console.log(data);
+// });
+// //чи можно так
+// loadFile("image.pmg")
+// .then((data) => {
+//   return data.toUpperCase();
+// })
+// .then((data) => {
+//   console.log(data);
+// })
+// .catch((error) => {
+//   console.log("Error", error);
+// })
+// .finally(() => {
+//   console.log("End");
+// });
+// Виведе:
+// Заватаження файлу image.pmg...
+// Promise { <pending> }
+// Заватаження файлу image.pmg...
+// ВМІСТ ФАЙЛУ IMAGE.PMG
+// ВМІСТ ФАЙЛУ IMAGE.PMG
+// End
+// Promise { 'Вміст файлу image.pmg' }
+// //щоб .then шли паралельно і не враховувались попередні .then та створює нові промізи
+// // const result = loadFile("photo.pmg");
+// // result.then((data) => {
+// // 	console.log(data, 1);
+// // 	return null;
+// // });
+// // result.then((data) => {
+// // 	console.log(data, 2);
+// // 	return null;
+// // });
+// // result.then((data) => {
+// // 	console.log(data, 3);
+// // 	return null;
+// // });
+// // Виведе:
+// // Заватаження файлу photo.pmg...
+// // Вміст файлу photo.pmg 1
+// // Вміст файлу photo.pmg 2
+// // Вміст файлу photo.pmg 3
+
+// function loadFile(filename) {   
+// 	return new Promise ((recolve, reject) => {
+// 		setTimeout(() => {
+// 		recolve(`Вміст файлу ${filename}`);
+// 	}, 2000);
+// 	});
+// }
+// function convertFile(content) {   
+// 	return new Promise ((recolve, reject) => {
+// 		setTimeout(() => {
+// 		recolve(`Конвертований вміст: ${content.toUpperCase()}`);
+// 	}, 1000);
+// 	});
+// }
+// function saveFile(convertedContent) {   
+// 	return new Promise ((recolve, reject) => {
+// 		setTimeout(() => {
+// 		reject("Error test");
+// 	}, 1500);
+// 	});
+// }
+// function sendFileToClient(convertedContent) {   
+// 	return new Promise ((recolve, reject) => {
+// 		setTimeout(() => {
+// 		recolve();
+// 	}, 500);
+// 	});
+// }
+
+// function getInfoFromFile(file) {
+// 	console.log(file, 1111);
+// 	return Promise.resolve(file); //дозволяє додати функції промізу нові файли
+	//якщо зробити просто return file. то через .then результат виведе але
+	// якщо потім буде треба визвати getInfoFromFile треба писати через return Promise.resolve(file);
+}
+// loadFile("example.txt")
+// .then((content) => {
+// 	console.log("Файл завантажено успішно!");  
+// 	console.log("Вміст файлу:", content);
+// 	return convertFile(content);
+// })
+// .then((data) => {
+// 	return getInfoFromFile(data);
+// })
+// .then((convertedContent) => {
+// 	console.log("Файл успішно сконвертовано!");  
+// 	console.log("Конвертований вміст:", convertedContent);
+// 	return saveFile(convertedContent);
+// })
+// .then(() => {
+// 	console.log("Файл успішно збережено!");  
+// 	return sendFileToClient();
+// })
+// .catch((error) => {
+// 	console.error("Сталася помилка", error);
+// })
+// .finally(() => {
+// 	console.log("Файл успішно відправлено клієнту!");  
+// });
+// Виведе:
+// Файл завантажено успішно!
+// Вміст файлу: Вміст файлу example.txt
+// Конвертований вміст: ВМІСТ ФАЙЛУ EXAMPLE.TXT 1111
+// Файл успішно сконвертовано!
+// Конвертований вміст: Конвертований вміст: ВМІСТ ФАЙЛУ EXAMPLE.TXT
+// Файл успішно збережено!
+// Файл успішно відправлено клієнту!
+
+// Promise.all([  ///Виводить масив значень виконнання промізу, якщо є хочь одно помилка  error
+// 	loadFile("example.txt"), 
+// 	getInfoFromFile("example1233.txt"), 
+// 	saveFile(), 
+// 	sendFileToClient(), 
+// 	convertFile("file")])
+// .then((data) => {
+// 	console.log(data);
+// });
+// Виведе:
+// example1233.txt 1111
+// [
+//   'Вміст файлу example.txt',
+//   'example1233.txt',
+//   undefined,
+//   undefined,
+//   'Конвертований вміст: FILE'
+// ]
+// const test = Promise.allSettled([  ///Виводить масив значень виконнання промізу без учоту помилок
+// 	loadFile("example.txt"), 
+// 	getInfoFromFile("example1233.txt"), 
+// 	saveFile(), 
+// 	sendFileToClient(), 
+// 	convertFile("file")])
+// .then((data) => {
+// 	console.log(data);
+// })
+// .catch((error) => {
+// 	console.log(error);
+// });
+// console.log(test);
+// Виведе:
+// example1233.txt 1111
+// Promise { <pending> }
+// [
+//   { status: 'fulfilled', value: 'Вміст файлу example.txt' },
+//   { status: 'fulfilled', value: 'example1233.txt' },
+//   { status: 'rejected', reason: 'Error test' },
+//   { status: 'fulfilled', value: undefined },
+//   { status: 'fulfilled', value: 'Конвертований вміст: FILE' }
+// ]
+// const test = Promise.any([  ///Виводить перший успішний результат
+// 	loadFile("example.txt"), 
+// 	getInfoFromFile("example1233.txt"), 
+// 	saveFile(), 
+// 	sendFileToClient(), 
+// 	convertFile("file")])
+// .then((data) => {
+// 	console.log(data);
+// })
+// .catch((error) => {
+// 	console.log(error);
+// });
+// console.log(test);
+// Виведе:
+// example1233.txt 1111
+// Promise { <pending> }
+// // example1233.txt
+// const test = Promise.race([  ///Виводить першу результат
+// 	loadFile("example.txt"), 
+// 	getInfoFromFile("example1233.txt"), 
+// 	saveFile(), 
+// 	sendFileToClient(), 
+// 	convertFile("file")])
+// .then((data) => {
+// 	console.log(data);
+// })
+// .catch((error) => {
+// 	console.log(error);
+// });
+// console.log(test);
+// // Виведе:
+// example1233.txt 1111
+// Promise { <pending> }
+// example1233.txt
