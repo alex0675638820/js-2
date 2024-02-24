@@ -2600,7 +2600,7 @@
 // 	return Promise.resolve(file); //дозволяє додати функції промізу нові файли
 	//якщо зробити просто return file. то через .then результат виведе але
 	// якщо потім буде треба визвати getInfoFromFile треба писати через return Promise.resolve(file);
-}
+// }
 // loadFile("example.txt")
 // .then((content) => {
 // 	console.log("Файл завантажено успішно!");  
@@ -2709,3 +2709,143 @@
 // example1233.txt 1111
 // Promise { <pending> }
 // example1233.txt
+
+// Робота з Promise та HTTP-запити
+// async- Використовується в оголошенні функцій для позначення їх як асинхронних
+// await- Використовується всередині асинхронних функцій для очікування результату проміса
+// перед продовженням виконання коду
+// async function saveFile() {
+// 	const file = await getFileFromServer()
+// 	await saveFileToPC(file)
+// }
+// function loadFile() {
+// 	return new Promise((resolve, reject) => {
+// 		setTimeout(() => resolve("Дані файлу"), 2000);
+// 	});
+// }
+// function sendFileToData(fileData) {
+// 	return new Promise((resolve, reject) => {
+// 		setTimeout(() => resolve(true), 1500);
+// 	});
+// }
+// function loadAndSendFile() {
+// 	return loadFile()
+// 	.then((data) => {
+// 		console.log(data);
+// 		return sendFileToData(data)})
+// 	.finally(() => console.log("Файл відправлено"));
+// }
+//можно так записати
+// const loadAndSendFile = () =>
+// 	loadFile()
+// 	.then((data) => sendFileToData(data))
+// 	.finally(() => console.log("Файл відправлено"));
+
+// loadAndSendFile();
+// Виведе: Дані файлу /Файл відправлено
+/// 
+// const loadAndSendFile = async () => {
+// 	try {   ///для обробки помилок
+// 	const data = await loadFile();
+
+// 	await sendFileToData(data);
+// 	} catch (e) {
+// 		console.log(e);
+// 	} finally {
+// 	console.log("Файл відправлено")
+// 	}
+// };
+// loadAndSendFile();
+// Виведе: Файл відправлено
+// const loadAndSendFile = async () => {
+// 	const data = await loadFile();
+// 	await sendFileToData(data);
+// 	console.log("Файл відправлено")
+// };
+// loadAndSendFile().then(() => {
+// 	console.log("End")
+// 	console.log("----------")
+// });
+// console.log("----------")
+// // Виведе: 
+// ----------
+// Файл відправлено
+// End
+// ----------
+
+// HTTP-запит — це механізм, який дозволяє веб-сторінкам звертатися до веб-серверів і отримувати дані.
+
+// console.log("test");
+// console.log(new Date().getTime());
+
+//  method Це вбудована властивість, яка повертає рядок, який представляє HTTP-метод запиту
+// GET — виконує запит для отримання ресурсуc
+// POST — відправляє дані на сервер для обробки або створеннянового ресурсуc
+// PUT — замінює повний ресурс або створює його, якщо він не існуєc
+// DELETE — видаляє вказаний ресурсc
+// HEAD — виконує запит без тіла для отримання заголовків відповідіc
+// OPTIONS — виконує запит для отримання доступних методів або параметрів запиту.
+
+// const request = new Request('https://jsonplaceholder.typicode.com/todos/1', {
+// 	method: "DELETE"
+// });
+// request.method = "POST"; //не змінює
+// console.log(request.method);
+
+// fetch('https://jsonplaceholder.typicode.com/todos/1', {
+// 	method: "DELETE",
+// });
+// fetch('https://jsonplaceholder.typicode.com/todos/1', {
+// 	method: "POST",
+// });
+
+// const data = {
+// 	id: 1,
+// 	name: "User",
+// 	age: 50,
+// };
+// async function getData() {
+// 	const res = await fetch('https://jsonplaceholder.typicode.com/todos/1', {
+// 		method: "POST",
+// 		body: JSON.stringify(data),
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 			Authorization: "Bearer your_token",
+// 		},
+// 	});
+// 	console.log(res);
+// }
+// getData();
+/// виведе теж саме
+// fetch('https://jsonplaceholder.typicode.com/todos/1', {
+// 	method: "POST",
+// 	body: JSON.stringify(data), //Передає данні з data на сервер. 
+// 	// json() повертає данні (через new Request) в вигляді як передавали .
+// 	//text() повертає данні (через new Request) в вигляді рядку	
+// 	//clone() створення копії об'єкта Request.	
+// 	// bodyUsed показує, чи були запити.json().text() видасть truy якщо ні folse
+// 	//headers містить інформацію про заголовки HTTP-запит
+// 	headers: {
+// 		"Content-Type": "application/json",
+// 		Authorization: "Bearer your_token",
+// 	},
+// }).then((res) => {
+// 	console.log(res);
+// });
+// async function getData() {
+// 	const res = await fetch('https://jsonplaceholder.typicode.com/todos/1', {
+// 		method: "GET",
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 			Authorization: "Bearer your_token",
+// 		},
+// 	});
+// 	console.log(res.bodyUsed);
+// 	const data = await res.json();
+// 	// const data = await res.text(); /// розпарсити зі строки можна через JSON.parse(data)
+// 	console.log(data);
+// 	console.log(res.bodyUsed);
+// 	console.log(res.status); ///res.statusText опис статусу 
+// 	console.log(res.ok);
+// }
+// getData();
