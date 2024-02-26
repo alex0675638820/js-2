@@ -2849,3 +2849,356 @@
 // 	console.log(res.ok);
 // }
 // getData();
+
+//Функція-генератор / це особливий тип функції, який може призупиняти своє виконання, повертаючи проміжний результат
+//дозволяє створювати ітератори, повертає спеціальний об'єкт-ітератор. Цей об'єкт використовується для управління процесом виконання функції-генератора.
+
+// async function performFile(path) {
+// const content = await loadFile(path);  ///Зават=нтаження файлу
+// const data = await convertFile(content);  ///конвертація файлу
+// const convertedContent = await getInfoFromFile(data);  ///Отримання інформації про файл
+// await saveFile(convertedContent); ///збереження файлу 
+// await sendFileToClient(); ///відправлення файлу клієнту на фронтент частину
+// }
+// //
+// function loadFile(filename) {   
+// 		return new Promise ((recolve, reject) => {
+// 			setTimeout(() => {
+// 			recolve(`Вміст файлу ${filename}`);
+// 		}, 2000);
+// 		});
+// 	}
+// 	function convertFile(content) {   
+// 		return new Promise ((recolve, reject) => {
+// 			setTimeout(() => {
+// 			recolve(`Конвертований вміст: ${content.toUpperCase()}`);
+// 		}, 2000);
+// 		});
+// 	}
+// 	function saveFile(convertedContent) {   
+// 		return new Promise ((recolve, reject) => {
+// 			setTimeout(() => {
+// 			reject("Error test");
+// 		}, 1500);
+// 		});
+// 	}
+// 	function sendFileToClient(convertedContent) {   
+// 		return new Promise ((recolve, reject) => {
+// 			setTimeout(() => {
+// 			recolve();
+// 		}, 500);
+// 		});
+// 	}
+	
+// 	function getInfoFromFile(file) {
+// 		console.log(file, 1111);
+// 		return Promise.resolve(file); 
+// 	}
+// async function performFile(path) {
+// 	const content = await loadFile(path);
+// 	return [
+// 		async () => {
+// 		const data = await convertFile(content);
+// 		return [
+// 			async () => {
+// 				const convertedContent = await getInfoFromFile(data);
+// 				await saveFile(convertedContent);
+// 				await sendFileToClient();
+// 			},
+// 			data,
+// 		];
+// 		},
+// 		content,
+// 	];			
+// }
+// // performFile("file.pmg").then(([next, content]) => console.log(next, content));
+// //чи можно так
+// async function main() { 
+// 	const [next, content] = await performFile("file.pmg");
+// 	console.log(next, content);
+// 	///....
+// 	////...
+// 	await next();
+// }
+// main();
+//Видасть: [AsyncFunction(anonymous)] Вміст файлу file.pmg
+
+// function* myGenerator() {
+// 	console.log("Start");
+// 	///....код
+// 	yield 1;
+// 	///....код
+// 	console.log("Start 2");
+// 	yield 2;
+// 	console.log("Start 3");
+// 	yield 3;
+// 	console.log("End");
+// }
+// const generator = myGenerator();
+// const result1 = generator.next();
+// console.log(result1); ////Видасть: Start / { value: 1, done: false }
+// const result2 = generator.next();
+// console.log(result2);
+//Видасть:
+// Start
+// { value: 1, done: false }
+// Start 2
+// { value: 2, done: false }
+// const result3 = generator.next();
+// console.log(result3);
+//Видасть:
+// Start
+// { value: 1, done: false }
+// Start 2
+// { value: 2, done: false }
+// Start 3
+// { value: 3, done: false }
+// const result4 = generator.next();
+// console.log(result4);
+//Видасть:
+// Start
+// { value: 1, done: false }
+// Start 2
+// { value: 2, done: false }
+// Start 3
+// { value: 3, done: false }
+// End
+// { value: undefined, done: true }/  якщо додати return 4 пысля console.log("End");
+//  буде { value: 4, done: true }
+
+// function* processOrder(order) {
+// 	yield validateOrder(order); ///
+// 	yield processPayment(order); ///
+// 	yield sendOrderConfirmation(order); ///
+
+// 	return order;
+// }
+// function getOrderDetails() {
+// 	const order = {id: 123, produck: "Товар", quantity: 2};
+// 	return order;
+// }
+// function validateOrder(order) {
+// 	const isValid = order.quantity > 0;
+// 	return isValid;
+// }
+// function processPayment(order) {
+// 	const isPaymentSuccessful = Math.random() < 0.5;
+// 	return isPaymentSuccessful;
+// }
+// function sendOrderConfirmation(order) {
+// 	const isConfirmationSent = true;
+// 	return isConfirmationSent;
+// }
+// const order = {id: 123, produck: "Товар", quantity: 2};
+// const orderProcessing = processOrder(order);
+// console.log(orderProcessing.next());
+// console.log(orderProcessing.next());
+// console.log(orderProcessing.next());
+// console.log(orderProcessing.next());
+//Видасть:
+// { value: true, done: false }
+// { value: true, done: false }
+// { value: true, done: false }
+// { value: { id: 123, produck: 'Товар', quantity: 2 }, done: true }
+// можно і так 
+// const order = {id: 123, produck: "Товар", quantity: 2};
+// const orderProcessing = processOrder(order);
+// const isValidatorOrder = orderProcessing.next().value;
+// if(isValidatorOrder === false) {
+// 	//... ваше замовлення не провалідоване
+// }
+// const isProcessPayment = orderProcessing.next();
+// if(isProcessPayment === false) {
+// 	//... процесс оплати не успішний
+// }
+// console.log(orderProcessing.next());
+// console.log(orderProcessing.next());
+
+// function* generatorFunction() {
+// 	yield "First value";
+// 	yield "Seccond value";
+// 	return 3;
+// }
+// const generator = generatorFunction();
+// for(let value of generator) {
+// 	console.log(value); /// First value/	Seccond value
+// }
+// const generator11 = generatorFunction();
+// console.log(generator11.next());//Seccond value { value: 'First value', done: false }
+// console.log(generator11.next());//Seccond value { value: 'Seccond value', done: false }
+// console.log(generator11.next());//Seccond value { value: 3, done: true }
+// function* generatorOne() {
+// 	yield "1 1";
+// 	yield "1 2";
+// 	return 3;
+// }
+// function* generatorTwo() {
+// 	yield* generatorOne();
+// 	yield "2 1";
+// 	yield "2 2";
+// }
+// const generator1 = generatorTwo();
+// console.log(generator1.next()); //{ value: '1 1', done: false }
+// console.log(generator1.next()); //{ value: '1 2', done: false }
+// console.log(generator1.next()); //{ value: '2 1', done: false }
+// console.log(generator1.next()); //{ value: '2 2', done: false }
+
+// function* myGenerator() {
+// 	//...
+// 	const test = yield 1;
+// 	console.log("test", test)
+// 	const value = yield 2;
+// 	yield 3;
+// 	yield value;
+// }
+//  const generator = myGenerator();
+//  console.log(generator.next().value); //1
+//  console.log(generator.next(4).value); //test 4/ 2
+//  console.log(generator.next(4).value); //3
+//  console.log(generator.next().value); //4
+
+//дострокове припинення генератора
+// function* myGenerator() {
+// 	//...
+// 	const test = yield 1;
+// 	return 10;
+// 	console.log("test", test)
+// 	const value = yield 2;
+// 	yield 3;
+// 	yield value;
+// }
+//  const generator = myGenerator();
+//  console.log(generator.next().value); //1
+//  console.log(generator.next(4).value); //10
+//  console.log(generator.next()); //{ value: undefined, done: true }
+//  console.log(generator.next(4).value); //undefined
+//  console.log(generator.next().value); //undefined
+ //чи можно так
+//  function* myGenerator() {
+// 	//...
+// 	const test = yield 1;
+// 	console.log("test", test)
+// 	const value = yield 2;
+// 	yield 3;
+// 	yield value;
+// }
+// const generator = myGenerator();
+//  console.log(generator.next().value); //1
+//  console.log(generator.return(100)); //{ value: 100, done: true }
+//  console.log(generator.next()); //{ value: undefined, done: true }
+//  console.log(generator.next(4).value); //undefined
+//  console.log(generator.next().value); //undefined
+ // якщо потрібно додати помилку 
+//  function* myGenerator() {
+// 	try {//...
+// 	const test = yield 1;
+// 	console.log("test", test)
+// 	const value = yield 2;
+// 	yield 3;
+// 	yield value;
+// 	} catch (e) {
+// 		// console.log(e);
+// 		yield 1000;
+// 		yield 2000;
+// 	} finally {
+// 		yield 3030;
+// 	}
+// 	yield 3000;
+// 	yield 3200;
+// }
+// const generator = myGenerator();
+//  console.log(generator.next().value);
+//  console.log(generator.throw(new Error())); 
+//  console.log(generator.next().value); 
+//  console.log(generator.next().value); 
+//  console.log(generator.next().value); 
+//  console.log(generator.next().value); 
+//  console.log(generator.next().value); 
+//Видасть:
+// 1
+// Error
+//     at Object.<anonymous> (C:\Users\user\work\js -2\index.js:3107:30)
+//     at Module._compile (node:internal/modules/cjs/loader:1254:14)
+//     at Module._extensions..js (node:internal/modules/cjs/loader:1308:10)
+//     at Module.load (node:internal/modules/cjs/loader:1117:32)
+//     at Module._load (node:internal/modules/cjs/loader:958:12)
+//     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+//     at node:internal/main/run_main_module:23:47
+// { value: 1000, done: false }
+// { value: 2000, done: false }
+// без console.log(e);
+// 1
+// { value: 1000, done: false }
+// 2000
+// 3030
+// 3000
+// 3200
+// undefined
+
+///Асинхронні генератори
+// const asyncFunc = () => new Promise((resolve) => setTimeout(resolve, 1000));
+// async function* asyncGenerator() {
+// 	await asyncFunc();
+// 	yield "After 1 second";
+// 	await asyncFunc();
+// 	yield "After 2 second";
+// }
+// async function runGenerator() {
+// 	const generator = asyncGenerator();
+// 	// console.log((await generator.next()).value); //After 1 second
+// 	// console.log((await generator.next()).value); //After 2 second
+// 	//або
+// 	let result = null;
+// 	result = await generator.next();
+// 	console.log(result);    //{ value: 'After 1 second', done: false }
+// 	result = await generator.next();
+// 	console.log(result);    //{ value: 'After 2 second', done: false }
+// 	//якщо потрібно проітерувати через for
+// 	// for await (const result of generator) {
+// 	// 	console.log(result);  // After 1 second/ After 2 second
+// 	// }
+// }
+// runGenerator();
+
+//функція яка іметує завантаження данних з серевера
+// function fetchDataFromServer() {
+// 	return new Promise((resolve, reject) => {
+// 		//Симулюємо асинхронний запит до сервера
+// 		setTimeout(() => {
+// 			const randomNumber = Math.random();
+// 			if(randomNumber < 0.7) {
+// 				resolve("Дані успішно завантажені");
+// 			}else {
+// 				reject("Помилка завантаження даних")
+// 			}
+// 		}, 1000)
+// 	});
+// }
+// //Функція для конвертації данних
+// function convertData(data) {
+// 	return new Promise((resolve) => {
+// 		//Симулюємо асинхронний конвертації данних
+// 		setTimeout(() => {
+// 			const converteData = data.toUpperCase(); //Приклад конвертаціі
+// 			resolve(convertData);
+// 		}, 500)
+// 	});
+// }
+// //Генераторний метод, що використовує yield для послідовного завантаження даних на сервер
+// async function* fetchData() {
+// 	try {
+// 		const result = await fetchDataFromServer();  //завантажуємо дані з серверу
+// 		yield "pending"; //повертаємо статус "pending"
+// 		const converteData = await convertData(result); //конвертуємо дані
+// 		yield "success"; ///повертаємо статус "success"
+// 		return convertData;  //повертаємо конвертовані дані
+// 	} catch (error) {
+// 		yield "error"; //повертаємо статус "error"
+// 	}
+// }
+// (async () => {
+// 	const generator = fetchData();
+// 	console.log(await generator.next()); //{ value: 'pending', done: false }/ чи { value: 'error', done: false }
+// 	console.log(await generator.next());//{ value: 'success', done: false }/ чи  value: undefined, done: true }
+// 	console.log(await generator.next());//{ value: "Дані успішно завантажені", done: true }/ чи  value: undefined, done: true }
+// })();
